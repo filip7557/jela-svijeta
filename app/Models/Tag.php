@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Dish;
+use App\Models\Meal;
 
 class Tag extends Model
 {
@@ -15,8 +15,8 @@ class Tag extends Model
         'slug',
     ];
 
-    public function dish()
+    public function meal()
     {
-        return $this->belongsTo(Dish::class);
+        return $this->belongsTo(Meal::class);
     }
 }

@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Category;
 use App\Models\Tag;
 
-class Dish extends Model
+class Meal extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'title',
         'description',
         'status',

@@ -4,16 +4,16 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
-use App\Models\Dish;
+use App\Models\Meal;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Dish>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Meal>
  */
-class DishFactory extends Factory
+class MealFactory extends Factory
 {
 
 
-    protected $model = Dish::class;
+    protected $model = Meal::class;
 
     /**
      * Define the model's default state.
@@ -26,7 +26,7 @@ class DishFactory extends Factory
             'title' => fake()->word,
             'description' => fake()->text,
             'status' => 'created',
-            'category' => 2,
+            'category' => rand(0, 3),
         ];
     }
 }

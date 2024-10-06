@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Dish;
+use App\Models\Meal;
 
 Route::get('/', function () {
     //get filtered ones and return
-    return Dish::all();
+    return Meal::all();
 });
 
 Route::get('/greeting', function () {

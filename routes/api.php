@@ -2,11 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DishController;
-use App\Models\Dish;
+use App\Http\Controllers\MealController;
+use App\Models\Meal;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/dishes', [DishController::class, 'index']);
+Route::get('/meals', [MealController::class, 'index']);
