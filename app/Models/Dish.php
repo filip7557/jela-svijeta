@@ -12,6 +12,7 @@ class Dish extends Model
     protected $fillable = [
         'title',
         'description',
-        'status'
+        'status',
+        'category',
     ];
 }
