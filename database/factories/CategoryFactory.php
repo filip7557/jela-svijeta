@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CategoryFactory extends Factory
 {
-    protected static $id = -1;
-
     /**
      * Define the model's default state.
      *
@@ -19,11 +17,9 @@ class CategoryFactory extends Factory
 
     public function definition(): array
     {
-        static::$id++;
         return [
-            'id' => static::$id,
-            'title' => sprintf("Category %d title in ENG", static::$id),
-            'slug' => sprintf("category-%d", static::$id),
+            'title' => fake()->word,
+            'slug' => fake()->word,
         ];
     }
 }
