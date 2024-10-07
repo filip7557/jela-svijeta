@@ -13,4 +13,13 @@ class Category extends Model
         'title',
         'slug',
     ];
+
+    public function to_json()
+    {
+        $new_category = new Category;
+        $new_category->id = $this->id;
+        $new_category->title = $this->title;
+        $new_category->slug = $this->slug;
+        return $new_category;
+    }
 }

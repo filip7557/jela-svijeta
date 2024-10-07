@@ -13,6 +13,13 @@ class Tag extends Model
     protected $fillable = [
         'title',
         'slug',
+        'meal_id',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'meal_id',
     ];
 
     public function meal()
