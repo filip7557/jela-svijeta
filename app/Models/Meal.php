@@ -48,6 +48,6 @@ class Meal extends Model implements TranslatableContract
             $ingredients = $meal->ingredients;
             $new_meal->ingredients = $ingredients;
             return $new_meal;
-        }, json_decode(json_encode($meals)));
+        }, $meals->all());
     }
 }
