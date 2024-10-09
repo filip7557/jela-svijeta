@@ -40,7 +40,7 @@ class Meal extends Model implements TranslatableContract
                     $new_meal->category = NULL;
                 else
                 {
-                    $new_meal->category = Category::where('id', $meal->category)->firstorfail()->to_json();
+                    $new_meal->category = Category::where('id', $meal->category)->firstorfail()->to_json($lang);
                 }
             }
             if (in_array("tags", $with)) {

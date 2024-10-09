@@ -16,6 +16,13 @@ class CategorySeeder extends Seeder
     {
         DB::delete('DELETE FROM categories');
         DB::delete('DELETE FROM sqlite_sequence where name="categories"');
-        Category::factory()->count(4)->create();
+        Category::factory()->count(4)->create()->each(function ($category) {
+            $title = fake()->word;
+            foreach (['en', 'nl', 'fr', 'de'] as $locale) {
+                $category->translateOrNew($locale)->title = "{$title} {$locale}";
+            }
+
+            $category->save();
+        });
     }
 }

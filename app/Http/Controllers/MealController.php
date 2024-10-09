@@ -21,6 +21,10 @@ class MealController extends Controller
         foreach ($langs as $new_lang) {
             array_push($supported_langs, $new_lang->lang);
         }
+        if ($lang == "")
+            return response() -> json(['error' => "No language specified."]);
+        if (!in_array($lang, $supported_langs))
+            return response() -> json(['error' => "Specified language not supported."]);
 
         $category = $request->category;
         if ($category != "") {
@@ -69,12 +73,6 @@ class MealController extends Controller
         if ($per_page == "")
             $per_page = count($meals);
         $new_meals = $meals->slice(floor(($page-1)*$per_page), $per_page);
-
-
-        if ($lang == "")
-            return response() -> json(['error' => "No language specified."]);
-        if (!in_array($lang, $supported_langs))
-            return response() -> json(['error' => "Specified language not supported."]);
 
         $totalPages = floor((count($meals) / $per_page));
         if ($totalPages == 0)
