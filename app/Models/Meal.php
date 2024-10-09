@@ -7,35 +7,33 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\Ingredient;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Meal extends Model
+class Meal extends Model implements TranslatableContract
 {
     use HasFactory;
+    use Translatable;
 
-    protected $fillable = [
-        'id',
-        'title',
-        'description',
-        'status',
-        'category',
-    ];
+    protected $translatedAttributes = [];
+    protected $hidden = ['translations'];
+
+    public static $lang;
 
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'meal_ingredient');
     }
 
-    public static function to_json($meals, $request)
+    public static function to_json($meals, $lang)
     {
-        if ($request->lang != NULL)
-            $lang = $request->lang;
-        else
-            $lang = 'en';
+        Meal::$lang = $lang;
         return array_map(function ($meal) {
+            $meal = Meal::where('id', $meal->id)->firstorfail();
             $new_meal = new Meal;
             $new_meal->id = $meal->id;
-            $new_meal->title = $meal->getTranslation(lang)->title;
-            $new_meal->description = $meal->getTranslation(lang)->description;
+            $new_meal->title = $meal->translate(Meal::$lang)->title;
+            $new_meal->description = $meal->translate(Meal::$lang)->description;
             if ($meal->updated_at != $meal->created_at)
                 $new_meal->status = "modified";
             else
@@ -44,10 +42,10 @@ class Meal extends Model
                 $new_meal->category = NULL;
             else
             {
-                $new_meal->category = Category::where('id', $meal->category)->firstorfail()->getTranslation(lang)->to_json();
+                $new_meal->category = Category::where('id', $meal->category)->firstorfail()->to_json();
             }
-            $new_meal->tags = Tag::where('meal_id', $meal->id)->get()->getTranslation(lang);
-            $ingredients = Meal::where('id', $meal->id)->get()->firstorfail()->getTranslation(lang)->ingredients;
+            $new_meal->tags = Tag::where('meal_id', $meal->id)->get();
+            $ingredients = $meal->ingredients;
             $new_meal->ingredients = $ingredients;
             return $new_meal;
         }, json_decode(json_encode($meals)));

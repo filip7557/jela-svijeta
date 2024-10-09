@@ -23,8 +23,6 @@ class MealFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->word,
-            'description' => fake()->text,
             'status' => 'created',
             'category' => rand(0, 3),
         ];
