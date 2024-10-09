@@ -25,10 +25,10 @@ class Meal extends Model implements TranslatableContract
         return $this->belongsToMany(Ingredient::class, 'meal_ingredient');
     }
 
-    public static function to_json($meals, $lang)
+    public static function to_json($meals, $lang, $with)
     {
         Meal::$lang = $lang;
-        return array_map(function ($meal) {
+        return array_map(function ($meal) use ($with) {
             $meal = Meal::where('id', $meal->id)->firstorfail();
             $new_meal = new Meal;
             $new_meal->id = $meal->id;
@@ -38,15 +38,21 @@ class Meal extends Model implements TranslatableContract
                 $new_meal->status = "modified";
             else
                 $new_meal->status = "created";
-            if ($meal->category == 0)
-                $new_meal->category = NULL;
-            else
-            {
-                $new_meal->category = Category::where('id', $meal->category)->firstorfail()->to_json();
+            if (in_array("category", $with)) {
+                if ($meal->category == 0)
+                    $new_meal->category = NULL;
+                else
+                {
+                    $new_meal->category = Category::where('id', $meal->category)->firstorfail()->to_json();
+                }
             }
-            $new_meal->tags = Tag::where('meal_id', $meal->id)->get();
-            $ingredients = $meal->ingredients;
-            $new_meal->ingredients = $ingredients;
+            if (in_array("tags", $with)) {
+                $new_meal->tags = Tag::where('meal_id', $meal->id)->get();
+            }
+            if (in_array("ingredients", $with)) {
+                $ingredients = $meal->ingredients;
+                $new_meal->ingredients = $ingredients;
+            }
             return $new_meal;
         }, $meals->all());
     }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Meal;
 use App\Models\Category;
 use App\Models\Lang;
+use App\Models\Tag;
 
 class MealController extends Controller
 {
@@ -21,6 +22,45 @@ class MealController extends Controller
             array_push($supported_langs, $new_lang->lang);
         }
 
+        $category = $request->category;
+        if ($category != "") {
+            if ($category == "!NULL") {
+                $meals = $meals->filter(function ($meal) {
+                    return $meal->category != NULL;
+                });
+            }
+            else {
+                $meals = $meals->filter(function ($meal) use ($category) {
+                    if ($category == "NULL")
+                        $category = 0;
+                    return $meal->category == $category;
+                });
+            }
+        }
+
+        $tags = $request->tags;
+        if ($tags != "") {
+            $tags = explode(",", $tags);
+            for ($i = 0; $i < count($tags); $i++) {
+                $tags[$i] = intval($tags[$i], 10);
+            }
+            $meals = $meals->filter(function ($meal) use ($tags) {
+                foreach (Tag::where('meal_id', $meal->id)->get() as $tag) {
+                    $bool = in_array($tag->id, $tags);
+                    if ($bool == false)
+                        return false;
+                }
+                return true;
+            });
+        }
+
+        $with = $request->with;
+        if ($with != "") {
+            $with = explode(",", $with);
+        }
+        else
+            $with = [];
+
         $page = $request->page;
         if ($page == "")
             $page = 1;
@@ -35,14 +75,18 @@ class MealController extends Controller
             return response() -> json(['error' => "No language specified."]);
         if (!in_array($lang, $supported_langs))
             return response() -> json(['error' => "Specified language not supported."]);
+
+        $totalPages = floor((count($meals) / $per_page));
+        if ($totalPages == 0)
+            $totalPages = 1;
         return response() -> json([
             'meta' => [
                 'currentPage' => $page,
                 'totalItems' => count($meals),
                 'itemPerPage' => $per_page,
-                'totalPages' => floor((count($meals) / $per_page)),
+                'totalPages' => $totalPages,
             ],
-            'data' => Meal::to_json($new_meals, $lang)
+            'data' => Meal::to_json($new_meals, $lang, $with)
         ]);
     }
 }
