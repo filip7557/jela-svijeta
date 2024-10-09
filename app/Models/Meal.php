@@ -18,8 +18,6 @@ class Meal extends Model implements TranslatableContract
     protected $translatedAttributes = [];
     protected $hidden = ['translations'];
 
-    public static $lang;
-
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'meal_ingredient');
@@ -27,13 +25,12 @@ class Meal extends Model implements TranslatableContract
 
     public static function to_json($meals, $lang, $with)
     {
-        Meal::$lang = $lang;
-        return array_map(function ($meal) use ($with) {
+        return array_map(function ($meal) use ($with, $lang) {
             $meal = Meal::where('id', $meal->id)->firstorfail();
             $new_meal = new Meal;
             $new_meal->id = $meal->id;
-            $new_meal->title = $meal->translate(Meal::$lang)->title;
-            $new_meal->description = $meal->translate(Meal::$lang)->description;
+            $new_meal->title = $meal->translate($lang)->title;
+            $new_meal->description = $meal->translate($lang)->description;
             if ($meal->updated_at != $meal->created_at)
                 $new_meal->status = "modified";
             else
