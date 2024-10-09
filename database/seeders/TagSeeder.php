@@ -13,6 +13,13 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
-        Tag::factory()->count(10)->create();
+        Tag::factory()->count(10)->create()->each(function ($tag) {
+            $title = fake()->word;
+            foreach (['en', 'nl', 'fr', 'de'] as $locale) {
+                $tag->translateOrNew($locale)->title = "{$title} {$locale}";
+            }
+
+            $tag->save();
+        });
     }
 }

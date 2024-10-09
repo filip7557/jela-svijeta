@@ -17,9 +17,7 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            'title'=>fake()->word,
             'slug'=>fake()->unique()->word,
-            'meal_id'=>rand(1, 5)
         ];
     }
 }

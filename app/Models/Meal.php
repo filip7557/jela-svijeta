@@ -18,6 +18,11 @@ class Meal extends Model implements TranslatableContract
     protected $translatedAttributes = [];
     protected $hidden = ['translations'];
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'meal_tag');
+    }
+
     public function ingredients()
     {
         return $this->belongsToMany(Ingredient::class, 'meal_ingredient');
@@ -44,7 +49,11 @@ class Meal extends Model implements TranslatableContract
                 }
             }
             if (in_array("tags", $with)) {
-                $new_meal->tags = Tag::where('meal_id', $meal->id)->get();
+                $tags = $meal->tags;
+                foreach ($tags as $tag) {
+                    $tag->title = $tag->translate($lang)->title;
+                }
+                $new_meal->tags = $tags;
             }
             if (in_array("ingredients", $with)) {
                 $ingredients = $meal->ingredients;
