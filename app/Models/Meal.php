@@ -57,6 +57,9 @@ class Meal extends Model implements TranslatableContract
             }
             if (in_array("ingredients", $with)) {
                 $ingredients = $meal->ingredients;
+                foreach ($ingredients as $ingredient) {
+                    $ingredient->title = $ingredient->translate($lang)->title;
+                }
                 $new_meal->ingredients = $ingredients;
             }
             return $new_meal;
