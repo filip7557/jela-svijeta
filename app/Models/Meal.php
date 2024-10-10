@@ -38,7 +38,9 @@ class Meal extends Model implements TranslatableContract
             $new_meal->id = $meal->id;
             $new_meal->title = $meal->translate($lang)->title;
             $new_meal->description = $meal->translate($lang)->description;
-            if ($meal->updated_at != $meal->created_at)
+            if ($meal->trashed())
+                $new_meal->status = "deleted";
+            else if ($meal->updated_at != $meal->created_at)
                 $new_meal->status = "modified";
             else
                 $new_meal->status = "created";
