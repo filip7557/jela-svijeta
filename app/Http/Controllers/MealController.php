@@ -13,6 +13,24 @@ class MealController extends Controller
     public function index(Request $request)
     {
         $meals = Meal::where('status', 'created')->get();
+        $meals->concat(Meal::where('status', 'modified')->get());
+        $meals->sortBy('id');
+
+        $diff_time = $request->diff_time;
+        if ($diff_time != "") {
+            if($diff_time > 0) {
+                $meals = Meal::where('status', 'deleted')->get()->filter(function ($meal) use ($diff_time) {
+                    return $meal->deleted_at > $diff_time;
+                });
+                $meals->concat(Meal::where('status', 'created')->get()->filter(function ($meal) use ($diff_time) {
+                    return $meal->created_at > $diff_time;
+                }));
+                $meals->concat(Meal::where('status', 'modified')->get()->filter(function ($meal) use ($diff_time) {
+                    return $meal->updated_at > $diff_time;
+                }));
+                $meals->sortBy('id');
+            }
+        }
         
         $lang = "";
         $lang = $request->lang;
